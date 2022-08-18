@@ -25,12 +25,11 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class UserResourceTest {
 
-    public static final Integer ID = 1;
-    public static final String NAME = "Valdir";
-    public static final String EMAIL = "valdir@email.com";
-    public static final String PASSWORD = "123";
-
-    public static final int INDEX = 0;
+    private static final Integer ID      = 1;
+    private static final Integer INDEX   = 0;
+    private static final String NAME     = "Valdir";
+    private static final String EMAIL    = "valdir@mail.com";
+    private static final String PASSWORD = "123";
 
     private User user;
     private UserDTO userDTO;
@@ -43,8 +42,6 @@ class UserResourceTest {
 
     @Mock
     private ModelMapper mapper;
-
-
 
     @BeforeEach
     void setUp() {
@@ -66,14 +63,12 @@ class UserResourceTest {
 
         assertEquals(ID, response.getBody().getId());
         assertEquals(NAME, response.getBody().getName());
-        assertEquals(EMAIL,response.getBody().getEmail());
+        assertEquals(EMAIL, response.getBody().getEmail());
         assertEquals(PASSWORD, response.getBody().getPassword());
-
     }
 
     @Test
     void whenFindAllThenReturnAListOfUserDTO() {
-
         when(service.findAll()).thenReturn(List.of(user));
         when(mapper.map(any(), any())).thenReturn(userDTO);
 
@@ -83,7 +78,7 @@ class UserResourceTest {
         assertNotNull(response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(ArrayList.class, response.getBody().getClass() );
+        assertEquals(ArrayList.class, response.getBody().getClass());
         assertEquals(UserDTO.class, response.getBody().get(INDEX).getClass());
 
         assertEquals(ID, response.getBody().get(INDEX).getId());
@@ -93,7 +88,7 @@ class UserResourceTest {
     }
 
     @Test
-    void whenCreateThenReturnCreate() {
+    void whenCreateThenReturnCreated() {
         when(service.create(any())).thenReturn(user);
 
         ResponseEntity<UserDTO> response = resource.create(userDTO);
@@ -104,15 +99,29 @@ class UserResourceTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(service.update(userDTO)).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = resource.update(ID, userDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(UserDTO.class, response.getBody().getClass());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(NAME, response.getBody().getName());
+        assertEquals(EMAIL, response.getBody().getEmail());
     }
 
     @Test
     void delete() {
     }
 
-    private void startUser(){
-        user = new User(ID, NAME, EMAIL, PASSWORD);
+    private void startUser() {
+        user = new User(ID, NAME, EMAIL,  PASSWORD);
         userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
     }
 }
